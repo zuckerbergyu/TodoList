@@ -48,7 +48,7 @@ const Home: NextPage = () => {
     return () => {
       supabase.removeSubscription(subscribe);
     };
-  }, []);
+  }, [chatList]);
 
   const handleInput = (event: any) => {
     setInput(event.target.value);
