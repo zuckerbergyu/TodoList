@@ -20,6 +20,10 @@ const Home: NextPage = () => {
     }
   }, [chatList]);
 
+  useEffect(() => {
+    console.log("newMEssage", newMessage);
+  }, [newMessage]);
+
   const handleCreateChatMessage = async (chatMessage: string) => {
     await createChatMessage({
       name: "이름",
@@ -31,12 +35,11 @@ const Home: NextPage = () => {
   useEffect(() => {
     const subscribe = supabase
       .from<definitions["Chat"]>("Chat")
-      .on("*", (payload) => {
-        if (newMessage) {
-          setNewMessage([...newMessage, payload.new]);
-          console.log("payload.new", payload.new);
-          console.log("newMessage : ", newMessage);
-        }
+      .on("INSERT", (payload) => {
+        console.log("payload, ", payload);
+        setNewMessage([...newMessage, payload.new]);
+        // console.log("payload.new", payload.new);
+        // console.log("newMessage : ", newMessage);
       })
       .subscribe();
     return () => {
