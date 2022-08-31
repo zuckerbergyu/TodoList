@@ -3,26 +3,11 @@ import type { NextPage } from "next";
 import { Container, Box, Grid, Button, TextField } from "@mui/material";
 import { definitions } from "../../types/database";
 import { supabase } from "../../utils/supabaseClient";
-import { useCreateChatMessage, useGetChatList } from "../../api";
+import { getChatList, createChatMessage } from "../../api";
 
-// 처음에는 메세지목록을 그냥 가져오고 ,
-// 그다음에는 변화된것을 가져와서 여기서만 보여줌?.
 const Home: NextPage = () => {
   const [input, setInput] = useState("");
-  const [newMessage, setNewMessage] = useState<definitions["Chat"][]>([]);
-  const { data: chatList } = useGetChatList();
-  const { mutateAsync: createChatMessage } = useCreateChatMessage();
-
-  useEffect(() => {
-    if (chatList) {
-      console.log("이게호출되는지");
-      setNewMessage(chatList);
-    }
-  }, [chatList]);
-
-  useEffect(() => {
-    console.log("newMEssage", newMessage);
-  }, [newMessage]);
+  const [chatList, setChatList] = useState<definitions["Chat"][]>([]);
 
   const handleCreateChatMessage = async (chatMessage: string) => {
     await createChatMessage({
@@ -33,13 +18,31 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
+    getChatList().then((data) => {
+      if (data) {
+        setChatList(data);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log("chatList useEffect : ", chatList);
+  }, [chatList]);
+
+  useEffect(() => {
     const subscribe = supabase
       .from<definitions["Chat"]>("Chat")
       .on("INSERT", (payload) => {
-        console.log("payload, ", payload);
-        setNewMessage((oldMessage) => [...oldMessage, payload.new]);
-        // console.log("payload.new", payload.new);
-        // console.log("newMessage : ", newMessage);
+        console.log("payload.new: ", payload.new);
+        console.log("chatList: ", chatList);
+
+        let temp = [...chatList];
+        temp.push(payload.new);
+        setChatList(temp);
+
+        // setChatList((oldMessage) => {
+        //   return [...oldMessage, payload.new];
+        // });
       })
       .subscribe();
     return () => {
@@ -74,11 +77,11 @@ const Home: NextPage = () => {
           </Grid>
         </Grid>
       </form>
-      <Box>
-        {newMessage.map(({ text }) => {
+      <div>
+        {chatList?.map(({ text }) => {
           return <div style={{ color: "red" }}>메세지 : {text}</div>;
         })}
-      </Box>
+      </div>
     </Container>
   );
 };
