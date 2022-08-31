@@ -12,6 +12,102 @@ export interface paths {
       };
     };
   };
+  "/Chat": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.Chat.id"];
+          name?: parameters["rowFilter.Chat.name"];
+          text?: parameters["rowFilter.Chat.text"];
+          timestamp?: parameters["rowFilter.Chat.timestamp"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["Chat"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** Chat */
+          Chat?: definitions["Chat"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.Chat.id"];
+          name?: parameters["rowFilter.Chat.name"];
+          text?: parameters["rowFilter.Chat.text"];
+          timestamp?: parameters["rowFilter.Chat.timestamp"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.Chat.id"];
+          name?: parameters["rowFilter.Chat.name"];
+          text?: parameters["rowFilter.Chat.text"];
+          timestamp?: parameters["rowFilter.Chat.timestamp"];
+        };
+        body: {
+          /** Chat */
+          Chat?: definitions["Chat"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/profiles": {
     get: {
       parameters: {
@@ -213,6 +309,23 @@ export interface paths {
 }
 
 export interface definitions {
+  Chat: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /** Format: text */
+    name?: string;
+    /** Format: text */
+    text?: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    timestamp?: string;
+  };
   profiles: {
     /**
      * Format: uuid
@@ -288,6 +401,16 @@ export interface parameters {
   offset: string;
   /** @description Limiting and Pagination */
   limit: string;
+  /** @description Chat */
+  "body.Chat": definitions["Chat"];
+  /** Format: bigint */
+  "rowFilter.Chat.id": string;
+  /** Format: text */
+  "rowFilter.Chat.name": string;
+  /** Format: text */
+  "rowFilter.Chat.text": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.Chat.timestamp": string;
   /** @description profiles */
   "body.profiles": definitions["profiles"];
   /** Format: uuid */
