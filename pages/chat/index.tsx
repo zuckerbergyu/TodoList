@@ -37,7 +37,7 @@ const Home: NextPage = () => {
       .from<definitions["Chat"]>("Chat")
       .on("INSERT", (payload) => {
         console.log("payload, ", payload);
-        setNewMessage([...newMessage, payload.new]);
+        setNewMessage((oldMessage) => [...oldMessage, payload.new]);
         // console.log("payload.new", payload.new);
         // console.log("newMessage : ", newMessage);
       })
