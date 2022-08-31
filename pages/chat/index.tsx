@@ -3,22 +3,29 @@ import type { NextPage } from "next";
 import { Container, Box, Grid, Button, TextField } from "@mui/material";
 import { definitions } from "../../types/database";
 import { supabase } from "../../utils/supabaseClient";
-import { useCreateChatMessage, useGetChatList } from "../../api";
+import { useCreateChatMessage, useGetChatList, getChatList } from "../../api";
 
 // 처음에는 메세지목록을 그냥 가져오고 ,
 // 그다음에는 변화된것을 가져와서 여기서만 보여줌?.
 const Home: NextPage = () => {
   const [input, setInput] = useState("");
   const [newMessage, setNewMessage] = useState<definitions["Chat"][]>([]);
-  const { data: chatList } = useGetChatList();
-  const { mutateAsync: createChatMessage } = useCreateChatMessage();
+  // const { data: chatList } = useGetChatList();
 
   useEffect(() => {
-    if (chatList) {
-      console.log("이게호출되는지");
-      setNewMessage(chatList);
-    }
-  }, [chatList]);
+    getChatList().then((data) => {
+      console.log("asdfasdf");
+      setNewMessage(data);
+    });
+  }, []);
+  const { mutateAsync: createChatMessage } = useCreateChatMessage();
+
+  // useEffect(() => {
+  //   if (chatList) {
+  //     console.log("이게호출되는지");
+  //     setNewMessage(chatList);
+  //   }
+  // }, [chatList]);
 
   useEffect(() => {
     console.log("메세지 : ", newMessage);
@@ -34,9 +41,9 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const subscribe = supabase
-      .from("Chat")
+      .from<definitions["Chat"]>("Chat")
       .on("*", (payload) => {
-        console.log("payload.new", payload.new);
+        console.log("payload.new", payload);
         console.log("newMessage : ", newMessage);
         setNewMessage([...newMessage, payload.new]);
       })
