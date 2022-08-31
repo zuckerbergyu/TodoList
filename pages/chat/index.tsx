@@ -34,21 +34,17 @@ const Home: NextPage = () => {
       .from<definitions["Chat"]>("Chat")
       .on("INSERT", (payload) => {
         console.log("payload.new: ", payload.new);
-        console.log("chatList: ", chatList);
 
-        let temp = [...chatList];
-        temp.push(payload.new);
-        setChatList(temp);
-
-        // setChatList((oldMessage) => {
-        //   return [...oldMessage, payload.new];
-        // });
+        setChatList((oldMessage) => {
+          console.log([...oldMessage, payload.new]);
+          return [payload.new, ...oldMessage];
+        });
       })
       .subscribe();
     return () => {
       supabase.removeSubscription(subscribe);
     };
-  }, [chatList]);
+  }, []);
 
   const handleInput = (event: any) => {
     setInput(event.target.value);
@@ -78,8 +74,12 @@ const Home: NextPage = () => {
         </Grid>
       </form>
       <div>
-        {chatList?.map(({ text }) => {
-          return <div style={{ color: "red" }}>메세지 : {text}</div>;
+        {chatList?.map(({ text, timestamp }) => {
+          return (
+            <div style={{ color: "red" }}>
+              메세지 : {text}-{timestamp}
+            </div>
+          );
         })}
       </div>
     </Container>
