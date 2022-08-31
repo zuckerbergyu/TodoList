@@ -15,7 +15,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     getChatList().then((data) => {
       console.log("asdfasdf");
-      setNewMessage(data);
+      if (data) setNewMessage(data);
     });
   }, []);
   const { mutateAsync: createChatMessage } = useCreateChatMessage();
